@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup
 
 def read_codechef_profile(handle):
     try:
+        # Fetching html content from user profile page
         r = requests.get("https://www.codechef.com/users/" + handle)
         soup = BeautifulSoup(r.text, 'html.parser')
 
         data = soup.find_all('article')
-
+        
+        # Submission categories
         solve_categories = ['Fully Solved', 'Partially Solved']
 
         profile = dict()
@@ -28,7 +30,7 @@ def read_codechef_profile(handle):
 
                     state[contest_title][solve_categories[i]] = len(attempted)
 
-
+        # Fetching current rating and other details of the user
         profile['current_rating'] = soup.find('div', attrs={'class': 'rating-number'}).text
 
         rank_obj = soup.find('div', attrs={'class': 'rating-ranks'}).find_all('a')
@@ -42,7 +44,7 @@ def read_codechef_profile(handle):
             profile['stars'] = '0'
         else:
             profile['stars'] = username_content[0].text[:1]
-
+        # Return the profile object with all the user details
         return profile
 
     except IndexError:
